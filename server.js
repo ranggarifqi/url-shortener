@@ -52,6 +52,8 @@ const is_url = (str) => {
 }
 
 app.post("/api/shorturl/new", function (req, res) {
+  // Using oldschool callback hell
+
   const url = req.body.url;
 
   // Check if Valid URL
@@ -98,6 +100,23 @@ app.post("/api/shorturl/new", function (req, res) {
   });
 });
 
+app.get('/api/shorturl/:id', async function (req, res) {
+  // using async await
+
+  const id = req.params.id;
+
+  // findOne where short_url = id
+  try {
+    const result = await URLModel.findOne({ short_url: id });
+
+    if (!result) {
+      return res.status(404).json({ error: 'No short url found for given input' })
+    }
+    return res.redirect(result.original_url);
+  } catch (error) {
+    return res.json({ error: error.message });
+  }
+});
 
 app.listen(port, function () {
   console.log('Node.js listening ...');
